@@ -1,0 +1,73 @@
+
+ar STATUS_COL = 10; // column J = Status
+// ---------- NEW COMPLAINT ----------
+function doPost(e) {
+if (!e || !e.parameter) {
+return ContentService.createTextOutput("Error: No data received.");
+}
+var data = e.parameter;
+if (data.website) return ContentService.createTextOutput("ok"); // honeypot
+if (!data.category || !data.details || !data.department || !data.email) {
+return ContentService.createTextOutput("Error: Missing required fields.");
+}
+var trackingId = data.trackingId || "";
+var lock = LockService.getScriptLock();
+lock.waitLock(10000);
+try {
+var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+sheet.appendRow([
+new Date(), // A: Timestamp
+data.category, // B: Category
+data.details, // C: Details
+data.location || "", // D: Location
+data.priority || "Low", // E: Priority
+data.department, // F: Department
+data.email, // G: Email
+Math.max(1, parseInt(data.affected, 10) || 1), // H: Affected Count
+trackingId, // I: Tracking ID
+"Pending" // J: Status
+]);
+} finally {
+lock.releaseLock();
+}
+try {
+var body =
+"Hello,\n\n" +
+"Your complaint regarding '" + data.category + "' has been registered and sent to the " +
+data.department + " department.\n\n" +
+"YOUR TRACKING ID: " + trackingId + "\n\n" +
+"Please keep this ID and follow it on the Live Tracker for further updates. " +
+"We will also email you whenever the status changes.\n\n" +
+"Thank you,\nSmart Grievance Portal\nPDA College of Engineering";
+Code
+MailApp.sendEmail(data.email, "Complaint Registered - " + trackingId + " | PDA College", body);
+} catch (err) {
+console.error("Email failed: " + err);
+}
+return ContentService.createTextOutput("Success");
+}
+// ---------- STATUS CHANGE EMAIL ----------
+// Runs when you edit the Status column (needs an installable trigger, see below)
+function onStatusEdit(e) {
+if (!e || !e.range) return;
+var row = e.range.getRow();
+if (row < 2 || e.range.getColumn() !== STATUS_COL) return;
+var r = e.range.getSheet().getRange(row, 1, 1, 10).getValues()[0];
+var category = r[1], email = r[6], trackingId = r[8];
+var status = e.value || r[9];
+if (!email) return;
+var body =
+"Hello,\n\nThere is an update on your complaint regarding '" + category + "'.\n\n" +
+"Tracking ID: " + trackingId + "\n" +
+"New status: " + status + "\n\n" +
+"You can see full details on the Live Tracker.\n\n" +
+"Smart Grievance Portal\nPDA College of Engineering";
+try {
+MailApp.sendEmail(email, "Complaint Update (" + status + ") - " + trackingId, body);
+} catch (err) {
+console.error("Email failed: " + err);
+}
+}
+// Run once from the editor to grant Gmail permission
+function testEmail() {
+MailApp
