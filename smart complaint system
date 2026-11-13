@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMART COMPLAINT SYSTEM</title>
+    <style>
+        /* Smooth scrolling for navbar jumps */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: #334155;
+            background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        /* College Header & Centered Branding */
+        .college-header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 25px 30px;
+            border-radius: 16px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            text-align: center; /* Center aligns everything inside */
+        }
+
+        .logo-title-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .college-logo {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .header-text h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            /* Colorful attractive text gradient */
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            border: none;
+            padding: 0;
+        }
+
+        .college-address {
+            margin: 4px 0 0 0;
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+
+        .header-nav {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 18px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .header-nav a {
+            text-decoration: none;
+            color: #4f46e5;
+            font-weight: 600;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .header-nav a:hover {
+            color: #4338ca;
+        }
+
+        form {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background-color: #f8fafc;
+            box-sizing: border-box;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+        }
+
+        button[type="submit"] {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+            transition: transform 0.2s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+        }
+
+        /* About Section */
+        .about-container {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 35px;
+            border-radius: 16px;
+            margin: 30px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .about-container h2 {
+            margin-top: 0;
+            font-size: 24px;
+            text-align: center;
+            border: none;
+            color: #1e293b;
+        }
+
+        .about-subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 15px;
+            margin-bottom: 30px;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .about-card {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .about-card h3 {
+            margin-top: 0;
+            color: #2563eb;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .about-card ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        .about-card li {
+            font-size: 14px;
+            color: #334155;
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 30px;
+            border-radius: 16px;
+            margin: 30px 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .dashboard-container h2 {
+            margin-top: 0;
+            font-size: 22px;
+            text-align: center;
+            border: none;
+            color: #1e293b;
+        }
+
+        .college-footer {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #334155;
+            font-size: 14px;
+        }
+
+        .college-footer p {
+            margin: 5px 0;
+        }
+
+        .dev-credits {
+            font-size: 12px;
+            color: #64748b;
+        }
+		/* Email Input Label & Field Styling */
+label[for="email"] {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #334155;
+    font-size: 14px;
+}
+
+input[type="email"] {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    font-size: 14px;
+    color: #1e293b;
+    outline: none;
+    box-sizing: border-box;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Glow effect when the user clicks inside */
+input[type="email"]:focus {
+    background: rgba(255, 255, 255, 0.95);
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+}
+
+/* Placeholder styling */
+input[type="email"]::placeholder {
+    color: #94a3b8;
+}
+    </style>
+</head>
+<body>
+    <header class="college-header">
+        <div class="logo-title-group">
+            <img src="C:\Users\ADMIN\Downloads\pda-college-logo.svg" alt="PDA College Logo" class="college-logo">
+            <div class="header-text">
+                <h2>PDA College of Engineering</h2>
+                <p class="college-address">Aiwan-E-Shahi Area, Kalaburagi, Karnataka - 585102</p>
+            </div>
+        </div>
+        <nav class="header-nav">
+            <a href="#form-section">Submit Issue</a>
+            <a href="#dashboard-section">Live Tracker</a>
+            <a href="#about">About</a>
+        </nav>
+    </header>
+    <section id="form-section">
+        <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted0) { alert('Complaint Registered Successfully!'); window.location.reload(); }"></iframe>
+        
+        <form action="https://script.google.com/macros/s/AKfycbwla5zDtn28Fwdh5Y-fYYsatAhZkK1hvBTfSF59rAuZyvDTvK6uzn6_I9pmAXl8alVI7A/exec" method="POST" target="hidden_iframe" onsubmit="submitted0=true;">
+            <h2>Submit a Complaint</h2>
+
+            <label for="subject">Complaint Category:</label>
+            <input type="text" id="subject" name="category" placeholder="e.g., Broken Bench in Library, Wi-Fi Issue, Lab PC Not Working" required>
+
+            <label for="details">Detailed Description:</label>
+            <textarea id="details" name="details" rows="4" placeholder="Describe the problem clearly..." required></textarea>
+
+            <label>Location:</label>
+            <input type="text" name="location" placeholder="e.g., Block A, Room 202">
+<label for="email">Student Email (for updates):</label>
+<input type="email" id="email" name="email" placeholder="e.g., student@gmail.com" required>
+<br><br>
+            <label>Priority Level:</label>
+            <select name="priority">
+                <option value="Low">Low - Minor inconvenience</option>
+                <option value="Medium">Medium - Affects several students</option>
+                <option value="High">High - Safety, Water, or Power Emergency</option>
+            </select>
+
+            <label>Target Department:</label>
+            <select name="department" required>
+                <option value="" disabled selected>Select Department</option>
+                <option value="ECE">ECE</option>
+                <option value="CSE">CSE</option>
+                <option value="Mechanical">Mechanical</option>
+                <option value="AIML/IS">AIML/IS</option>
+                <option value="EI/EEE">EI/EEE</option>
+                <option value="first year block">First Year Block</option>
+                <option value="Library">Library</option>
+                <option value="Civil">Civil</option>
+                <option value="General Admin">General Admin / College Office</option>
+            </select>
+
+            <label>How many students are affected?</label>
+            <input type="number" name="affected" min="1" value="1">
+
+            <button type="submit">Submit Complaint</button>
+        </form>
+    </section>
+
+    <section id="dashboard-section" class="dashboard-container">
+        <h2>Complaint Tracking Dashboard</h2>
+        <p class="about-subtitle">Live real-time status synced directly from Google Sheets database.</p>
+        
+        <div style="background: rgba(255,255,255,0.6); padding: 10px; border-radius: 12px;">
+            <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTPlMXf7Hs0as68LEc_lX41r2NCZyYJwvik6bIZcmR2OtYiCQ10tn5oKL7fzR6rAx3unRBLYzR9RvUL/pubhtml?widget=true&amp;headers=false" width="100%" height="450" style="border: none; border-radius: 8px;"></iframe>
+        </div>
+		<div id="successCard" class="success-card" style="display: none;">
+        <div class="success-icon">✅</div>
+        <h3>Grievance Successfully Registered!</h3>
+        <p>Your issue has been logged into the department serverless database.</p>
+        
+        <div class="token-box">
+            <span>Your Reference Tracking ID:</span>
+            <strong id="trackingId">CMP-2026-0000</strong>
+        </div>
+
+        <p class="success-note">Please keep note of your ID to track real-time resolution status on the live dashboard below.</p>
+        <button type="button" class="reset-btn" onclick="resetFormView()">Submit Another Complaint</button>
+    </div>
+    </section>
+
+
+    <section id="about" class="about-container">
+        <h2>About the Student Grievance Portal</h2>
+        <p class="about-subtitle">An efficient, serverless web application engineered to digitize and streamline campus issue reporting for PDA College of Engineering.</p>
+
+        <div class="about-grid">
+            <div class="about-card">
+                <h3>⚙️ Technical Workflow & Architecture</h3>
+                <ul>
+                    <li><strong>Frontend Interface:</strong> Developed using lightweight, responsive HTML5 and CSS3 with a modern glassmorphic UI.</li>
+                    <li><strong>Serverless Backend:</strong> Utilizes Google Apps Script (`doPost` handler) as an intermediary webhook to capture form submissions.</li>
+                    <li><strong>Cloud Data Storage:</strong> Automatically logs incoming complaints directly into Google Sheets.</li>
+                </ul>
+            </div>
+            <div class="about-card">
+                <h3>🌟 Operational Impact & Benefits</h3>
+                <ul>
+                    <li><strong>Departmental Segregation:</strong> Routes issues directly to ECE, CSE, Mechanical, Civil, or Administration.</li>
+                    <li><strong>Transparency:</strong> Replaces paper logs with digital timestamps and a live embedded tracker.</li>
+                    <li><strong>Academic Feasibility:</strong> Demonstrates full-stack integration suitable for undergraduate engineering projects.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- DEVELOPER FOOTER -->
+    <footer class="college-footer">
+        <p>Developed for PDA College of Engineering</p>
+        <p class="dev-credits">Department of Electronics and Communication Engineering (ECE)</p>
+    </footer>
+
+</body>
+</html>
