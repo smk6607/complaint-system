@@ -66,6 +66,31 @@ function doPost(e) {
   return ContentService.createTextOutput("Success");
 }
 
+// ---------- DASHBOARD DATA (public, emails and details are NOT included) ----------
+function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var last = sheet.getLastRow();
+  var rows = [];
+  if (last >= 2) {
+    var tz = "Asia/Kolkata";
+    sheet.getRange(2, 1, last - 1, 10).getValues().forEach(function (r) {
+      if (!r[8]) return; // skip rows without a tracking ID
+      rows.push({
+        id: String(r[8]),
+        date: r[0] instanceof Date ? Utilities.formatDate(r[0], tz, "dd MMM yyyy, HH:mm") : String(r[0]),
+        category: String(r[1]),
+        location: String(r[3]),
+        priority: String(r[4]),
+        department: String(r[5]),
+        status: String(r[9] || "Pending")
+      });
+    });
+  }
+  rows.reverse(); // newest first
+  return ContentService.createTextOutput(JSON.stringify({ complaints: rows }))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
 // ---------- STATUS CHANGE EMAIL ----------
 // Runs when the Status column is edited (needs an installable trigger: run setupTrigger once)
 function onStatusEdit(e) {
