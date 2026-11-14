@@ -276,6 +276,27 @@ input[type="email"]::placeholder {
     color: #94a3b8;
 }
     </style>
+
+    <style>
+        .dash-box { background: rgba(255,255,255,0.6); padding: 12px; border-radius: 12px; }
+        .dash-toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+        .dash-toolbar input { flex: 1 1 220px; margin: 0; }
+        .dash-toolbar select { flex: 0 0 auto; margin: 0; width: auto; }
+        .dash-toolbar button, .dash-footer button { width: auto; margin: 0; padding: 8px 14px; }
+        .dash-table-wrap { overflow-x: auto; max-height: 520px; overflow-y: auto; border-radius: 8px; }
+        .dash-table { width: 100%; border-collapse: collapse; font-size: 14px; background: #fff; color: #1e293b; }
+        .dash-table th { position: sticky; top: 0; background: #1e3a8a; color: #fff; text-align: left; padding: 10px; white-space: nowrap; }
+        .dash-table td { padding: 9px 10px; border-bottom: 1px solid #e2e8f0; }
+        .dash-msg { text-align: center; padding: 20px !important; color: #64748b; }
+        .badge { padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; white-space: nowrap; }
+        .st-Pending { background: #fef3c7; color: #92400e; }
+        .st-InProgress { background: #dbeafe; color: #1e40af; }
+        .st-Resolved { background: #dcfce7; color: #166534; }
+        .st-other { background: #e2e8f0; color: #334155; }
+        .pr-High { color: #b91c1c; font-weight: 700; }
+        .pr-Medium { color: #b45309; font-weight: 600; }
+        .dash-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; color: #475569; font-size: 14px; }
+    </style>
 </head>
 <body>
     <header class="college-header">
@@ -341,8 +362,27 @@ input[type="email"]::placeholder {
         <h2>Complaint Tracking Dashboard</h2>
         <p class="about-subtitle">Live real-time status synced directly from Google Sheets database.</p>
         
-        <div style="background: rgba(255,255,255,0.6); padding: 10px; border-radius: 12px;">
-            <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTPlMXf7Hs0as68LEc_lX41r2NCZyYJwvik6bIZcmR2OtYiCQ10tn5oKL7fzR6rAx3unRBLYzR9RvUL/pubhtml?widget=true&amp;headers=false" width="100%" height="450" style="border: none; border-radius: 8px;"></iframe>
+        <div class="dash-box">
+            <div class="dash-toolbar">
+                <input type="text" id="dashSearch" placeholder="Search by Tracking ID, category, department or status..." oninput="renderDash(true)">
+                <select id="dashStatus" onchange="renderDash(true)">
+                    <option value="">All statuses</option>
+                    <option>Pending</option>
+                    <option>In Progress</option>
+                    <option>Resolved</option>
+                </select>
+                <button type="button" onclick="loadDash()">&#8635; Refresh</button>
+            </div>
+            <div class="dash-table-wrap">
+                <table class="dash-table">
+                    <thead><tr><th>Tracking ID</th><th>Date</th><th>Category</th><th>Department</th><th>Priority</th><th>Status</th></tr></thead>
+                    <tbody id="dashBody"><tr><td colspan="6" class="dash-msg">Loading complaints...</td></tr></tbody>
+                </table>
+            </div>
+            <div class="dash-footer">
+                <span id="dashCount"></span>
+                <button type="button" id="dashMore" onclick="showMore()" style="display:none;">Show more</button>
+            </div>
         </div>
 		<div id="successCard" class="success-card" style="display: none;">
         <div class="success-icon">✅</div>
@@ -390,5 +430,53 @@ input[type="email"]::placeholder {
         <p class="dev-credits">Department of Electronics and Communication Engineering (ECE)</p>
     </footer>
 
+
+<script>
+    var DASH_URL = "https://script.google.com/macros/s/AKfycbwla5zDtn28Fwdh5Y-fYYsatAhZkK1hvBTfSF59rAuZyvDTvK6uzn6_I9pmAXl8alVI7A/exec";
+    var dashData = [];
+    var dashShown = 25;
+
+    function esc(s) {
+        return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+            return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+    }
+
+    function loadDash() {
+        document.getElementById("dashBody").innerHTML = '<tr><td colspan="6" class="dash-msg">Loading complaints...</td></tr>';
+        fetch(DASH_URL)
+            .then(function (r) { return r.json(); })
+            .then(function (d) { dashData = d.complaints || []; renderDash(true); })
+            .catch(function () {
+                document.getElementById("dashBody").innerHTML = '<tr><td colspan="6" class="dash-msg">Could not load complaints. Please try again.</td></tr>';
+            });
+    }
+
+    function renderDash(reset) {
+        if (reset) dashShown = 25;
+        var q = document.getElementById("dashSearch").value.trim().toLowerCase();
+        var st = document.getElementById("dashStatus").value;
+        var list = dashData.filter(function (c) {
+            if (st && c.status !== st) return false;
+            if (!q) return true;
+            return (c.id + " " + c.category + " " + c.department + " " + c.status + " " + c.location).toLowerCase().indexOf(q) >= 0;
+        });
+        var rows = list.slice(0, dashShown).map(function (c) {
+            var stClass = { "Pending": "st-Pending", "In Progress": "st-InProgress", "Resolved": "st-Resolved" }[c.status] || "st-other";
+            return "<tr><td><strong>" + esc(c.id) + "</strong></td><td>" + esc(c.date) + "</td><td>" + esc(c.category) +
+                "</td><td>" + esc(c.department) + '</td><td class="pr-' + esc(c.priority) + '">' + esc(c.priority) +
+                '</td><td><span class="badge ' + stClass + '">' + esc(c.status) + "</span></td></tr>";
+        });
+        document.getElementById("dashBody").innerHTML = rows.length ? rows.join("") :
+            '<tr><td colspan="6" class="dash-msg">No complaints found.</td></tr>';
+        document.getElementById("dashCount").textContent = "Showing " + Math.min(dashShown, list.length) + " of " + list.length + " complaints";
+        document.getElementById("dashMore").style.display = list.length > dashShown ? "inline-block" : "none";
+    }
+
+    function showMore() { dashShown += 25; renderDash(false); }
+
+    loadDash();
+    setInterval(loadDash, 60000); // auto-refresh every minute
+</script>
 </body>
 </html>
